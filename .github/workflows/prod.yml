@@ -1,0 +1,48 @@
+name: Test, Build & Push to DockerHub
+
+on:
+  push:
+    branches:
+      - production
+    paths-ignore:
+      - '**.md'
+      - 'Makefile'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docker Image Security Test with Snyk
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_AUTH_TOKEN }}
+        with:
+          image: nginx:stable-alpine
+          args: --fail-on=upgradable
+
+  build-and-deploy-nginx:
+    needs: test
+    name: Build and Deploy Nginx
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          file: ./Dockerfile
+          tags: starlightromero/placita-nginx:latest
+          push: true
