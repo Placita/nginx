@@ -15,13 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Docker Image Security Test with Snyk
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_AUTH_TOKEN }}
-        with:
-          image: nginx:1.21-alpine
-          args: --fail-on=upgradable
+      # - name: Docker Image Security Test with Snyk
+      #   uses: snyk/actions/docker@master
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_AUTH_TOKEN }}
+      #   with:
+      #     image: nginx:1.21-alpine
+      #     args: --fail-on=upgradable
 
   build-and-deploy-nginx:
     needs: test
