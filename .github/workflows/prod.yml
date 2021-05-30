@@ -20,7 +20,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_AUTH_TOKEN }}
         with:
-          image: nginx:stable-alpine
+          image: nginx:1.21-alpine
           args: --fail-on=upgradable
 
   build-and-deploy-nginx:
